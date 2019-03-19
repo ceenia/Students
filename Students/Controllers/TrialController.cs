@@ -16,7 +16,7 @@ namespace Students.Controllers
 
         public ActionResult Welcome(string name, int numTimes = 1)
         {
-            ViewBag.Message = "Hello " + name;
+            ViewBag.Message = "Hello dfgdfg" + name;
             ViewBag.NumTimes = numTimes;
 
             return View();

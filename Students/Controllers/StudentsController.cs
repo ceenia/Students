@@ -12,12 +12,36 @@ namespace Students.Controllers
 {
     public class StudentsController : Controller
     {
-        private StudentsContext db = new StudentsContext();
+        private StudentDBContext db = new StudentDBContext();
 
         // GET: Students
-        public ActionResult Index()
+        //public ActionResult Index()
+        //{
+        //    return View(db.Students.ToList());
+        //}
+       // [HttpPost]
+        public ActionResult Index(string gender, string searchStng)
         {
-            return View(db.Students.ToList());
+            var GenderList = new List<string>();
+            var GenderQuery = from d in db.Students
+                              orderby d.Gender
+                              select d.Gender;
+            GenderList.AddRange(GenderQuery.Distinct());
+            ViewBag.gender = new SelectList(GenderList);
+         //   ViewBag.gender = new SelectList(GenderList,"Female");
+
+            var students = from s in db.Students
+                           select s;
+            if(!String.IsNullOrEmpty(searchStng))
+            {
+                students = students.Where(x => x.Name.Contains(searchStng));
+            }
+
+            if(!String.IsNullOrEmpty(gender))
+            { 
+                students = students.Where(x => x.Gender == gender);
+            }
+            return View(students);
         }
 
         // GET: Students/Details/5
@@ -46,7 +70,7 @@ namespace Students.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,Name,Dob,Gender,Mark")] Student student)
+        public ActionResult Create([Bind(Include = "ID,Name,Dob,Gender,Mark,Status,Email")] Student student)
         {
             if (ModelState.IsValid)
             {
@@ -78,7 +102,7 @@ namespace Students.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Name,Dob,Gender,Mark")] Student student)
+        public ActionResult Edit([Bind(Include = "ID,Name,Dob,Gender,Mark,Status,Email")] Student student)
         {
             if (ModelState.IsValid)
             {
